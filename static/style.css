@@ -1,0 +1,243 @@
+/* navbar */
+.k {
+    float: right;
+}
+
+.kilonav {
+    padding-left: 150px;
+}
+
+.kilonav li {
+    padding: 15px;
+}
+
+.nav11 {
+    position: fixed;
+    width: 100%;
+    z-index: 999;
+}
+
+.s {
+    border-color: orangered;
+    color: orangered;
+}
+
+.navbar button:hover{
+    color: white;
+    background-color: orangered;
+}
+
+/* carousel */
+
+.caru {
+    height: 250px;
+}
+
+.caru1 {
+    padding-top: 100px;
+    
+}
+
+
+/* cards */
+
+.card1 {
+    padding-top: 10px;
+
+}
+
+.card {
+    padding: 10px;
+    text-align: justify;
+    object-fit: cover;
+}
+
+/* card buttons */
+
+.btn1 button {
+    color: white;
+    background-color: orangered;
+    padding: 10px;
+    border-radius: 10px;
+    border-color: transparent;
+
+}
+
+.btn1 button:hover{
+    color: white;
+    background-color: #2B3035;
+    font-weight: bold;
+}
+
+
+/* tables and forms*/
+
+.productable{
+    padding-top: 30px;
+}
+
+.myaddproductform{
+    padding-top: 100px;
+    margin: 20px;
+}
+
+/* modal */
+
+.mymodal{
+    padding-top: 100px;
+    color: #2B3035;  
+    border-color: transparent;
+}
+
+.mymodal button{
+    background-color: orangered;
+    color: white;  
+    border-color: transparent;
+}
+
+.mymodal button:hover{
+    background-color: #2B3035;
+    color: white;  
+    border-color: transparent;
+}
+
+.mymodal .btn-close{
+    background-color: white;
+    color: white;
+}
+.mymodal .btn-close:hover{
+    background-color: white;
+    color: black;
+}
+
+.modal-footer .btn-primary{
+    background-color: orangered;
+    color: white;  
+    border-color: transparent;
+}
+.modal-footer .btn:hover{
+    background-color: #2B3035;
+    color: white;  
+    border-color: transparent;
+}
+
+/* edit button on product updates */
+
+.productable .btn-primary{
+    background-color: orangered;
+    color: white;  
+    border-color: transparent;
+}
+
+.productable .btn-primary:hover{
+    background-color: #2B3035;
+    color: white;  
+    border-color: transparent;
+}
+
+
+/* update product details */
+
+.modal-body .btn-primary{
+    background-color: orangered;
+    color: white;  
+    border-color: transparent;
+}
+
+.modal-body .btn-primary:hover{
+    background-color: #2B3035;
+    color: white;  
+    border-color: transparent;
+}
+
+
+/* form button */
+.myaddproductform button{
+    background-color: orangered;
+    color: white;
+    border-color: transparent;
+    border-radius: 5px;
+}
+
+.myaddproductform button:hover{
+    background-color: #2B3035;
+    color: white;
+}
+
+/* footer */
+
+.footer{
+    background-color: #2B3035;
+    color: white;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.footercopyright{
+    text-align: center;
+    background-color: black;
+    padding: 15px;
+    color: white;
+}
+
+.footer i{
+    font-size: 25px;
+}
+
+.footer .myicons{
+    display: flex;
+    justify-content: space-around;
+}
+
+.footer .myicons a:hover{
+    color: orangered;
+}
+
+.footer a:hover{
+    color: orangered;
+}
+
+a{
+    text-decoration: none;
+    color: white;
+}
+
+
+ul li{
+    list-style: none;
+}
+
+
+/* adding table columns lines to table */
+
+table.dataTable th, table.dataTable td {
+    border: 1px solid #333 !important; /* Ensure borders are always applied */
+    padding: 8px;
+  }
+  
+  /* Optional: Add style for header row */
+  table.dataTable thead th {
+    background-color: #f9f9f9;
+    border-bottom: 2px solid #333; /* Thicker bottom border for headers */
+  }
+
+
+
+  /* register */
+
+  .register{
+    padding-top: 130px;
+    padding-bottom: 30px;
+  }
+
+  .register button{
+    background-color: orangered;
+    color: white;
+    border-color: transparent;
+    border-radius: 5px;
+  }
+
+  .register button:hover{
+    background-color: #2B3035;
+    color: white;
+  }
