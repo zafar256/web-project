@@ -17,15 +17,6 @@
     z-index: 999;
 }
 
-.s {
-    border-color: orangered;
-    color: orangered;
-}
-
-.navbar button:hover{
-    color: white;
-    background-color: orangered;
-}
 
 /* carousel */
 
@@ -54,19 +45,20 @@
 
 /* card buttons */
 
-.btn1 button {
+.nav11 .btn1 button {
     color: white;
-    background-color: orangered;
-    padding: 10px;
+    background-color: #2B3035;
+    padding: 8px;
     border-radius: 10px;
     border-color: transparent;
 
 }
 
-.btn1 button:hover{
+.nav11 .btn1 button:hover{
     color: white;
-    background-color: #2B3035;
-    font-weight: bold;
+    background-color: transparent;
+    border-color: white;
+    border-color: black;
 }
 
 
@@ -226,8 +218,9 @@ table.dataTable th, table.dataTable td {
   /* register */
 
   .register{
-    padding-top: 130px;
-    padding-bottom: 30px;
+    padding-top: 150px;
+    padding-left: 100px;
+    padding-right: 100px;
   }
 
   .register button{

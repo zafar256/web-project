@@ -1,15 +1,27 @@
 # render template connects to html pages
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, session, url_for
 
-from database import conn, cur  # import to connect to database
+from functools import wraps
+from flask_bcrypt import Bcrypt
+from database import conn, cur  # import to connect to local database
 
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # connects flash
 
-cur.execute("CREATE TABLE IF NOT EXISTS products (id serial PRIMARY KEY, name VARCHAR ( 100 ) NOT NULL, buying_price NUMERIC(14, 2), selling_price NUMERIC(14, 2), stock_quantity INT DEFAULT 0);")
-cur.execute("CREATE TABLE IF NOT EXISTS sales (id serial PRIMARY KEY, pid int, quantity numeric(5,2), created_at TIMESTAMP, CONSTRAINT myproduct FOREIGN KEY(pid) references products(id) on UPDATE cascade on DELETE restrict);")
-conn.commit()
+# cur.execute("CREATE TABLE IF NOT EXISTS products (id serial PRIMARY KEY, name VARCHAR ( 100 ) NOT NULL, buying_price NUMERIC(14, 2), selling_price NUMERIC(14, 2), stock_quantity INT DEFAULT 0);")
+# cur.execute("CREATE TABLE IF NOT EXISTS sales (id serial PRIMARY KEY, pid int, quantity numeric(5,2), created_at TIMESTAMP, CONSTRAINT myproduct FOREIGN KEY(pid) references products(id) on UPDATE cascade on DELETE restrict);")
+# conn.commit()
 
+# decorative function
+def login_required(f):
+    @wraps(f)
+    def protected():
+        if 'email' not in session:
+            return redirect(url_for('login'))
+        return f()
+    return protected
+    
 
 @app.route("/")
 def home():
@@ -17,6 +29,7 @@ def home():
 
 
 @app.route("/dashboard")
+@login_required
 def dashboard():
     cur.execute("SELECT products.name, sum(sales.quantity*products.selling_price) from sales join products on products.id=sales.pid group by products.name;")
     salesperproduct = cur.fetchall()
@@ -36,10 +49,51 @@ def dashboard():
         pieproducts.append(j[0])
         pieprofits.append(float(j[1]))
 
+    cur.execute("""
+    WITH daily_sales AS (
+        SELECT 
+            SUM ((p.selling_price - p.buying_price) * s.quantity) AS sales, 
+            s.created_at::DATE AS sale_date
+        FROM 
+            sales AS s
+        JOIN 
+            products AS p 
+        ON 
+            p.id = s.pid
+        GROUP BY 
+            s.created_at::DATE
+    ),
+    daily_expenses AS (
+        SELECT 
+            SUM(amount) AS total_expenses, 
+            purchase_date::DATE AS expense_date
+        FROM 
+            purchases
+        GROUP BY 
+            purchase_date::DATE
+    )
+    SELECT 
+        s.sale_date AS profit_date,
+        COALESCE(s.sales, 0) - COALESCE(e.total_expenses, 0) AS final_profit
+    FROM 
+        daily_sales AS s
+    FULL OUTER JOIN 
+        daily_expenses AS e
+    ON 
+        s.sale_date = e.expense_date
+    WHERE
+        s.sale_date = '2025-03-07' OR e.expense_date = '2025-03-07'
+    """)
+
+    final_profit = cur.fetchone()
+    print(final_profit)
+
     return render_template("dashboard.html", x=x, y=y, pieproducts=pieproducts, pieprofits=pieprofits)
 
 
+
 @app.route("/products", methods=["GET", "POST"])
+@login_required
 def products():
     if request.method == "GET":
         cur.execute("select * from products;")
@@ -59,9 +113,15 @@ def products():
         cur.execute(queryinsert)
         conn.commit()
         return redirect('/products')
+    
+
+@app.route("/contact-us")
+def contact():
+    return render_template("contact.html")
 
 
 @app.route("/sales", methods=["GET", "POST"])
+@login_required
 def sales():
     if request.method == "GET":
         cur.execute("select * from products;")
@@ -111,8 +171,9 @@ def register():
         fullname = request.form["fullname"]
         email = request.form["email"]
         password = request.form["password"]
+        hashed_password = bcrypt.generate_password_hash('password').decode('utf-8')
         queryregister = "insert into users(fullname,email,password) "\
-            "values('{}','{}','{}')".format(fullname, email, password)
+            "values('{}','{}','{}')".format(fullname, email, password, hashed_password)
         # .format includes the variables used
         cur.execute(queryregister)
         conn.commit()
@@ -136,9 +197,15 @@ def login():
             flash("Invalid Credentials")
             return render_template("login.html")
         else:
+            session['email'] = emailaddress
             return redirect("/dashboard")
     else:
         return render_template("login.html")
+    
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/login")
 
 
 if __name__ == '__main__': 
