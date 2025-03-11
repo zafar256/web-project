@@ -82,13 +82,19 @@ def dashboard():
     ON 
         s.sale_date = e.expense_date
     WHERE
-        s.sale_date = '2025-03-07' OR e.expense_date = '2025-03-07'
+        s.sale_date = '2025-03-18' OR e.expense_date = '2025-03-18'
     """)
 
     final_profit = cur.fetchone()
     print(final_profit)
 
-    return render_template("dashboard.html", x=x, y=y, pieproducts=pieproducts, pieprofits=pieprofits)
+    pieproducts2 = []
+    pieprofits2 = []
+    for k in final_profit:
+        pieproducts2.append(k[0])
+        pieprofits2.append(k[1])
+
+    return render_template("dashboard.html", x=x, y=y, pieproducts=pieproducts, pieprofits=pieprofits, pieproducts2=pieproducts2, pieprofits2=pieprofits2)
 
 
 

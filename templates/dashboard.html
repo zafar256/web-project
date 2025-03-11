@@ -79,6 +79,12 @@
                 <canvas id="pie-chart" width="400" height="330"></canvas>
             </div>
         </div>
+
+        <div class="row" style="padding-top: 40px;">
+            <div class="col-12 col-sm-6 col-m-6">
+                <canvas id="pie-chart2" width="400" height="330"></canvas>
+            </div>
+        </div>
     </div>
 
 
@@ -86,7 +92,7 @@
 
     <!-- footer -->
 
-    <div class="footer">
+    <!-- <div class="footer">
         <div class="row">
             <div class="col-12 col-sm-6 col-m-3 col-lg-3">
                 <h3>eZafar</h3>
@@ -132,7 +138,7 @@
 
             </div>
         </div>
-    </div>
+    </div> -->
 
     <div class="footercopyright">
         <div>
@@ -179,7 +185,7 @@ new Chart(document.getElementById("pie-chart"), {
     data: {
       labels: {{ pieproducts | tojson }},
       datasets: [{
-        label: "Profits in Ksh",
+        label: "Profits in Ksh (Inclusive of Expenses)",
         backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#e1aba7","#5850c4","#50c458","#c49250","#cc4543"],
         data: {{ pieprofits | tojson }}
       }]
@@ -187,7 +193,26 @@ new Chart(document.getElementById("pie-chart"), {
     options: {
       title: {
         display: true,
-        text: 'Profits in Ksh.'
+        text: 'Profits in Ksh (Inclusive of Expenses)'
+      }
+    }
+});
+
+// pie chart2
+new Chart(document.getElementById("pie-chart2"), {
+    type: 'pie',
+    data: {
+      labels: {{ pieproducts | tojson }},
+      datasets: [{
+        label: "Profits in Ksh (Inclusive of Expenses)",
+        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#e1aba7","#5850c4","#50c458","#c49250","#cc4543"],
+        data: {{ pieprofits | tojson }}
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'Profits in Ksh (Exclusive of Expenses)'
       }
     }
 });

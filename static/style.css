@@ -43,12 +43,12 @@
     object-fit: cover;
 }
 
-/* card buttons */
+/* card and nav buttons */
 
 .nav11 .btn1 button {
     color: white;
-    background-color: #2B3035;
-    padding: 8px;
+    background-color: orangered;
+    padding: 6px;
     border-radius: 10px;
     border-color: transparent;
 
@@ -61,6 +61,50 @@
     border-color: black;
 }
 
+
+.card1 .btn1 button {
+    color: white;
+    background-color: #2B3035;
+    padding: 8px;
+    border-radius: 10px;
+    border-color: transparent;
+
+}
+
+.card1 .btn1 button:hover{
+    color: white;
+    background-color: orangered;
+    border-color: transparent;
+}
+
+
+.login{
+    padding-top: 130px;
+}
+
+.logindetails{
+    background-color: #2B3035;
+    padding: 40px;
+    margin-right: 80px;
+    margin-left: 80px;
+    border-radius: 15px;
+    color: white;
+}
+
+.logindetails button {
+    color: white;
+    background-color: orangered;
+    padding: 8px;
+    border-radius: 10px;
+    border-color: transparent;
+
+}
+
+.logindetails button:hover{
+    color: white;
+    background-color: transparent;
+    border-color: white;
+}
 
 /* tables and forms*/
 
@@ -167,9 +211,10 @@
 
 .footercopyright{
     text-align: center;
-    background-color: black;
+    background-color: #2B3035;
     padding: 15px;
     color: white;
+    margin-top: 30px;
 }
 
 .footer i{

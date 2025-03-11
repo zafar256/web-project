@@ -68,30 +68,31 @@
     </nav>
 
 
-    <div class="container register">
+    <div class="container login">
+        <div class="logindetails">
+            <h3 style="text-align: center; padding-bottom: 30px;">Login</h3>
 
-        <h3 style="text-align: center; padding-bottom: 30px;">Login</h3>
-
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul class=flashes>
-            {% for message in messages %}
-            <li style="list-style: none; color: red;">{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                <li style="list-style: none; color: red;">{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
 
 
-        <form action="/login" method="POST" class="row gy-2 gx-3 align-items-center">
-            <label for="fullname">Email</label>
-            <input type="email" value="" name="email" placeholder="E-mail" required>
+            <form action="/login" method="POST" class="row gy-2 gx-3 align-items-center">
+                <label for="fullname">Email</label>
+                <input type="email" value="" name="email" placeholder="E-mail" required>
 
-            <label for="email">Password</label>
-            <input type="password" value="" name="password" placeholder="Password" required>
+                <label for="email">Password</label>
+                <input type="password" value="" name="password" placeholder="Password" required>
 
-            <button type="submit">Login</button>
-        </form>
+                <button type="submit" style="margin-top: 30px;">Login</button>
+            </form>
+        </div>
     </div>
 
 
@@ -118,7 +119,7 @@
                 </ul>
             </div> -->
 
-            <!-- <div class="col-12 col-sm-6 col-m-3 col-lg-3">
+    <!-- <div class="col-12 col-sm-6 col-m-3 col-lg-3">
                 <h3>Quick Links</h3>
                 <div>
                     <ul>
@@ -130,7 +131,7 @@
                 </div>
             </div> -->
 
-            <!-- <div class="col-12 col-sm-6 col-m-3 col-lg-3">
+    <!-- <div class="col-12 col-sm-6 col-m-3 col-lg-3">
                 <h3>Account</h3>
                 <div>
                     <ul>
