@@ -198,24 +198,7 @@ new Chart(document.getElementById("pie-chart"), {
     }
 });
 
-// pie chart2
-new Chart(document.getElementById("pie-chart2"), {
-    type: 'pie',
-    data: {
-      labels: {{ pieproducts | tojson }},
-      datasets: [{
-        label: "Profits in Ksh (Inclusive of Expenses)",
-        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#e1aba7","#5850c4","#50c458","#c49250","#cc4543"],
-        data: {{ pieprofits | tojson }}
-      }]
-    },
-    options: {
-      title: {
-        display: true,
-        text: 'Profits in Ksh (Exclusive of Expenses)'
-      }
-    }
-});
+
     </script>
 
 </body>

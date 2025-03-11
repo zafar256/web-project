@@ -11,6 +11,7 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # connects flash
 
 # cur.execute("CREATE TABLE IF NOT EXISTS products (id serial PRIMARY KEY, name VARCHAR ( 100 ) NOT NULL, buying_price NUMERIC(14, 2), selling_price NUMERIC(14, 2), stock_quantity INT DEFAULT 0);")
 # cur.execute("CREATE TABLE IF NOT EXISTS sales (id serial PRIMARY KEY, pid int, quantity numeric(5,2), created_at TIMESTAMP, CONSTRAINT myproduct FOREIGN KEY(pid) references products(id) on UPDATE cascade on DELETE restrict);")
+# cur.execute("CREATE TABLE purchases(id SERIAL PRIMARY KEY, expense_category VARCHAR(100) NOT NULL, description TEXT, amount DECIMAL(10,2) NOT NULL, purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
 # conn.commit()
 
 # decorative function
@@ -49,52 +50,52 @@ def dashboard():
         pieproducts.append(j[0])
         pieprofits.append(float(j[1]))
 
-    cur.execute("""
-    WITH daily_sales AS (
-        SELECT 
-            SUM ((p.selling_price - p.buying_price) * s.quantity) AS sales, 
-            s.created_at::DATE AS sale_date
-        FROM 
-            sales AS s
-        JOIN 
-            products AS p 
-        ON 
-            p.id = s.pid
-        GROUP BY 
-            s.created_at::DATE
-    ),
-    daily_expenses AS (
-        SELECT 
-            SUM(amount) AS total_expenses, 
-            purchase_date::DATE AS expense_date
-        FROM 
-            purchases
-        GROUP BY 
-            purchase_date::DATE
-    )
-    SELECT 
-        s.sale_date AS profit_date,
-        COALESCE(s.sales, 0) - COALESCE(e.total_expenses, 0) AS final_profit
-    FROM 
-        daily_sales AS s
-    FULL OUTER JOIN 
-        daily_expenses AS e
-    ON 
-        s.sale_date = e.expense_date
-    WHERE
-        s.sale_date = '2025-03-18' OR e.expense_date = '2025-03-18'
-    """)
+    # cur.execute("""
+    # WITH daily_sales AS (
+    #     SELECT 
+    #         SUM ((p.selling_price - p.buying_price) * s.quantity) AS sales, 
+    #         s.created_at::DATE AS sale_date
+    #     FROM 
+    #         sales AS s
+    #     JOIN 
+    #         products AS p 
+    #     ON 
+    #         p.id = s.pid
+    #     GROUP BY 
+    #         s.created_at::DATE
+    # ),
+    # daily_expenses AS (
+    #     SELECT 
+    #         SUM(amount) AS total_expenses, 
+    #         purchase_date::DATE AS expense_date
+    #     FROM 
+    #         purchases
+    #     GROUP BY 
+    #         purchase_date::DATE
+    # )
+    # SELECT 
+    #     s.sale_date AS profit_date,
+    #     COALESCE(s.sales, 0) - COALESCE(e.total_expenses, 0) AS final_profit
+    # FROM 
+    #     daily_sales AS s
+    # FULL OUTER JOIN 
+    #     daily_expenses AS e
+    # ON 
+    #     s.sale_date = e.expense_date
+    # WHERE
+    #     s.sale_date = '2025-03-18' OR e.expense_date = '2025-03-18'
+    # """)
 
-    final_profit = cur.fetchone()
-    print(final_profit)
+    # final_profit = cur.fetchone()
+    # print(final_profit)
 
-    pieproducts2 = []
-    pieprofits2 = []
-    for k in final_profit:
-        pieproducts2.append(k[0])
-        pieprofits2.append(k[1])
+    # pieproducts2 = []
+    # pieprofits2 = []
+    # for k in final_profit:
+    #     pieproducts2.append(k[0])
+    #     pieprofits2.append(k[1])
 
-    return render_template("dashboard.html", x=x, y=y, pieproducts=pieproducts, pieprofits=pieprofits, pieproducts2=pieproducts2, pieprofits2=pieprofits2)
+    return render_template("dashboard.html", x=x, y=y, pieproducts=pieproducts, pieprofits=pieprofits)
 
 
 
@@ -171,19 +172,25 @@ def register():
     if request.method == "GET":
         cur.execute("select * from users;")
         users = cur.fetchall()
-        # print(products)
         return render_template("register.html", users=users)
     else:
         fullname = request.form["fullname"]
         email = request.form["email"]
-        password = request.form["password"]
-        hashed_password = bcrypt.generate_password_hash('password').decode('utf-8')
-        queryregister = "insert into users(fullname,email,password) "\
-            "values('{}','{}','{}')".format(fullname, email, password, hashed_password)
-        # .format includes the variables used
-        cur.execute(queryregister)
-        conn.commit()
-        return redirect("/register")
+        cur.execute("select id from users where email='{}'".format(email))
+        email_exists = cur.fetchone()
+  
+        if not email_exists is None:
+            flash('Email in use')
+            return render_template("register.html")
+        else:
+            password = request.form["password"]
+            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+            queryregister = "insert into users(fullname,email,password) "\
+                "values('{}','{}','{}')".format(fullname, email, hashed_password)
+            # .format includes the variables used
+            cur.execute(queryregister)
+            conn.commit()
+            return redirect("/login")
     
 
 # login route
@@ -193,18 +200,25 @@ def login():
     if request.method == "POST":
         emailaddress = request.form["email"]
         password = request.form["password"]
-
-        querylogin = "select id from users where email = '{}' and password = '{}'".format(emailaddress,password)
-        cur.execute(querylogin)
-
-# row variable represents a single user
-        row = cur.fetchone()
-        if row is None:
-            flash("Invalid Credentials")
-            return render_template("login.html")
+       
+        cur.execute("select id from users where email='{}'".format(emailaddress))
+        email_exists = cur.fetchone()
+  
+        if  email_exists is None:
+            print("-----why not print-----")
+            flash('Email does not exist. Try registering.')
+            return redirect("/login")
         else:
-            session['email'] = emailaddress
-            return redirect("/dashboard")
+            cur.execute("select password from users where email = '{}'".format(emailaddress))
+            saved_hashed = cur.fetchone()[0]
+            pass_bool = bcrypt.check_password_hash(saved_hashed, password)
+            
+            if pass_bool == False:
+                flash("Invalid Credentials")
+                return redirect("/login")
+            else:
+                session['email'] = emailaddress
+                return redirect("/dashboard")
     else:
         return render_template("login.html")
     
