@@ -5,7 +5,7 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sales</title>
+    <title>Stock</title>
 
     <!-- tables -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
@@ -80,7 +80,7 @@
     <!-- Button trigger modal -->
     <div class="mymodal container">
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            Add Sale
+            Add Stock
         </button>
 
         <!-- Modal -->
@@ -88,12 +88,12 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Sale</h1>
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Stock</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
 
-                        <form action="/sales" method="POST" class="mymodalbody row gy-2 gx-3 align-items-center">
+                        <form action="/stock" method="POST" class="mymodalbody row gy-2 gx-3 align-items-center">
                             <label for="productname">Product Name</label>
                             <select name="pid" id="">
                                 {% for p in products %}
@@ -102,7 +102,7 @@
                                 {% endfor %}
                             </select>
                             <label for="quantity">Quantity</label>
-                            <input type="number" name="soldquantity" placeholder="Enter Quantity" required>
+                            <input type="number" name="availablequantity" placeholder="Enter Quantity" required>
 
                             <!-- <div class="modal-footer"> -->
                                 <input type="submit" class="btn btn-primary"></input>
@@ -115,8 +115,7 @@
         </div>
     </div>
 
-
-    <!-- sales table -->
+    <!-- stock table -->
     <div class="container productable">
         <table id="myTable" class="display" border="2">
             <thead>
@@ -128,7 +127,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for s in mysales %}
+                {% for s in mystock %}
                 <tr>
                     <td>{{s[0]}}</td>
                     <td>{{s[1]}}</td>

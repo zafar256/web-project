@@ -11,7 +11,7 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # connects flash
 
 # cur.execute("CREATE TABLE IF NOT EXISTS products (id serial PRIMARY KEY, name VARCHAR ( 100 ) NOT NULL, buying_price NUMERIC(14, 2), selling_price NUMERIC(14, 2), stock_quantity INT DEFAULT 0);")
 # cur.execute("CREATE TABLE IF NOT EXISTS sales (id serial PRIMARY KEY, pid int, quantity numeric(5,2), created_at TIMESTAMP, CONSTRAINT myproduct FOREIGN KEY(pid) references products(id) on UPDATE cascade on DELETE restrict);")
-# cur.execute("CREATE TABLE purchases(id SERIAL PRIMARY KEY, expense_category VARCHAR(100) NOT NULL, description TEXT, amount DECIMAL(10,2) NOT NULL, purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
+# cur.execute("CREATE TABLE IF NOT EXISTS purchases(id SERIAL PRIMARY KEY, expense_category VARCHAR(100) NOT NULL, description TEXT, amount DECIMAL(10,2) NOT NULL, purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
 # conn.commit()
 
 # decorative function
@@ -49,12 +49,6 @@ def dashboard():
     for j in profits:
         pieproducts.append(j[0])
         pieprofits.append(float(j[1]))
-
-    
-
-
-
-    
 
     return render_template("dashboard.html", x=x, y=y, pieproducts=pieproducts, pieprofits=pieprofits)
 
@@ -107,6 +101,26 @@ def sales():
         conn.commit()
         return redirect("/sales")
 
+
+@app.route("/stock", methods=["GET", "POST"])
+@login_required
+def stock():
+    if request.method == "GET":
+        cur.execute("select * from products;")
+        products = cur.fetchall()
+        cur.execute("select * from stock;")
+        mystock = cur.fetchall()
+        
+        return render_template("stock.html", mystock=mystock, products=products)
+    else:
+        pid = request.form["pid"]
+        quantity = request.form["availablequantity"]
+        querystockinsert = "insert into stock(pid,quantity,created_at) "\
+            "values({},{},now())".format(pid, quantity)
+        cur.execute(querystockinsert)
+        conn.commit()
+        return redirect("/stock")
+    
 # route for editing products
 # NB the values passed in the request.form should match the entries in the database
 
