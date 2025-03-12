@@ -50,50 +50,11 @@ def dashboard():
         pieproducts.append(j[0])
         pieprofits.append(float(j[1]))
 
-    # cur.execute("""
-    # WITH daily_sales AS (
-    #     SELECT 
-    #         SUM ((p.selling_price - p.buying_price) * s.quantity) AS sales, 
-    #         s.created_at::DATE AS sale_date
-    #     FROM 
-    #         sales AS s
-    #     JOIN 
-    #         products AS p 
-    #     ON 
-    #         p.id = s.pid
-    #     GROUP BY 
-    #         s.created_at::DATE
-    # ),
-    # daily_expenses AS (
-    #     SELECT 
-    #         SUM(amount) AS total_expenses, 
-    #         purchase_date::DATE AS expense_date
-    #     FROM 
-    #         purchases
-    #     GROUP BY 
-    #         purchase_date::DATE
-    # )
-    # SELECT 
-    #     s.sale_date AS profit_date,
-    #     COALESCE(s.sales, 0) - COALESCE(e.total_expenses, 0) AS final_profit
-    # FROM 
-    #     daily_sales AS s
-    # FULL OUTER JOIN 
-    #     daily_expenses AS e
-    # ON 
-    #     s.sale_date = e.expense_date
-    # WHERE
-    #     s.sale_date = '2025-03-18' OR e.expense_date = '2025-03-18'
-    # """)
+    
 
-    # final_profit = cur.fetchone()
-    # print(final_profit)
 
-    # pieproducts2 = []
-    # pieprofits2 = []
-    # for k in final_profit:
-    #     pieproducts2.append(k[0])
-    #     pieprofits2.append(k[1])
+
+    
 
     return render_template("dashboard.html", x=x, y=y, pieproducts=pieproducts, pieprofits=pieprofits)
 
