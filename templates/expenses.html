@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Products</title>
+    <title>Expenses</title>
     <!-- tables -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <!-- bootstrap -->
@@ -64,6 +64,7 @@
                     </li>
                 </ul>
 
+
                 <div class="btn1">
                     <a href="/logout" style="padding-right: 15px;"><button>Logout</button></a>
                 </div>
@@ -72,12 +73,12 @@
         </div>
     </nav>
 
-    <!-- adding products to table using a modal form-->
+    <!-- adding expenses to table using a modal form-->
 
     <!-- Button trigger modal -->
     <div class="mymodal container">
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            Add Product
+            Add Expense
         </button>
 
         <!-- Modal -->
@@ -86,24 +87,24 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Product</h1>
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Expense</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
 
-                        <form action="/products" method="POST" class="mymodalbody row gy-2 gx-3 align-items-center">
+                        <form action="/expenses" method="POST" class="mymodalbody row gy-2 gx-3 align-items-center">
 
-                            <label for="">Product Name</label>
-                            <input type="text" placeholder="Product Name" name="productname" required>
+                            <label for="">Category</label>
+                            <input type="text" placeholder="Expense Category" name="category" required>
 
-                            <label for="">Buying Price</label>
-                            <input type="number" placeholder="Buying Price" name="buyingprice" required>
+                            <label for="">Description</label>
+                            <input type="text" placeholder="Expense Description" name="description" required>
 
-                            <label for="">Selling Price</label>
-                            <input type="number" placeholder="Selling Price" name="sellingprice" required>
+                            <label for="">Amount</label>
+                            <input type="number" placeholder="Amount" name="amount" required>
 
                             <!-- <div class="modal-footer"> -->
-                                <input type="submit" class="btn btn-primary"></input>
+                            <input type="submit" class="btn btn-primary"></input>
                             <!-- </div> -->
 
                         </form>
@@ -113,26 +114,28 @@
         </div>
     </div>
 
-    <!-- products table -->
+    <!-- expense table -->
     <div class="container productable">
         <table id="myTable" class="display" border="2">
             <thead>
                 <tr>
                     <th>Id</th>
-                    <th>Product Name</th>
-                    <th>Buying Price</th>
-                    <th>Selling Price</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Purchase Date</th>
                     <!-- th for editing -->
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                {% for p in myproducts %}
+                {% for p in myexpenses %}
                 <tr>
                     <td>{{p[0]}}</td>
                     <td>{{p[1]}}</td>
                     <td>{{p[2]}}</td>
                     <td>{{p[3]}}</td>
+                    <td>{{p[4]}}</td>
                     <td>
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
@@ -147,23 +150,23 @@
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Product</h1>
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Expense</h1>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
 
                                     <div class="modal-body">
-                                        <form action="/updateproducts" method="POST" class="row gy-2 gx-3 align-items-center">
+                                        <form action="/updateexpenses" method="POST" class="row gy-2 gx-3 align-items-center">
 
                                             <input type="hidden" name="id" value="{{p[0]}}">
 
-                                            <label for="name">Product Name:</label>
-                                            <input value="{{p[1]}}" type="text" name="name" required><br><br>
-                                            <label for="buyingPrice">Buying Price:</label>
-                                            <input value="{{p[2]}}" type="number" name="buying_price" step="0.01"
+                                            <label for="name">Category:</label>
+                                            <input value="{{p[1]}}" type="text" name="expense_category" required><br><br>
+                                            <label for="description">Description</label>
+                                            <input value="{{p[2]}}" type="text" name="description"
                                                 required><br><br>
-                                            <label for="sellingPrice">Selling Price:</label>
-                                            <input value="{{p[3]}}" type="number" name="selling_price" step="0.01"
+                                            <label for="amount">Amount</label>
+                                            <input value="{{p[3]}}" type="number" name="amount" step="0.01"
                                                 required><br><br>
 
                                             <button type="submit" class="btn btn-primary">Update</button>

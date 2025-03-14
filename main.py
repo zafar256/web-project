@@ -12,16 +12,20 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # connects flash
 # cur.execute("CREATE TABLE IF NOT EXISTS products (id serial PRIMARY KEY, name VARCHAR ( 100 ) NOT NULL, buying_price NUMERIC(14, 2), selling_price NUMERIC(14, 2), stock_quantity INT DEFAULT 0);")
 # cur.execute("CREATE TABLE IF NOT EXISTS sales (id serial PRIMARY KEY, pid int, quantity numeric(5,2), created_at TIMESTAMP, CONSTRAINT myproduct FOREIGN KEY(pid) references products(id) on UPDATE cascade on DELETE restrict);")
 # cur.execute("CREATE TABLE IF NOT EXISTS purchases(id SERIAL PRIMARY KEY, expense_category VARCHAR(100) NOT NULL, description TEXT, amount DECIMAL(10,2) NOT NULL, purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
+# cur.execute("CREATE TABLE IF NOT EXISTS stock (id serial PRIMARY KEY, pid int, quantity numeric(5,2), created_at TIMESTAMP, CONSTRAINT myproduct FOREIGN KEY(pid) references products(id) on UPDATE cascade on DELETE restrict);")
+# cur.execute("CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, email VARCHAR,password VARCHAR);")
+
 # conn.commit()
 
 # decorative function
 def login_required(f):
-    @wraps(f)
-    def protected():
-        if 'email' not in session:
-            return redirect(url_for('login'))
-        return f()
-    return protected
+     @wraps(f)
+     def protected():
+         if 'email' not in session:
+             flash('You must first Login')
+             return redirect(url_for('login'))
+         return f()
+     return protected
     
 
 @app.route("/")
@@ -65,11 +69,10 @@ def products():
         productname = request.form["productname"]
         buyingprice = float(request.form["buyingprice"])
         sellingprice = float(request.form["sellingprice"])
-        stockquantity = int(request.form["stockquantity"])
 
-        queryinsert = "insert into products(name,buying_price,selling_price,stock_quantity)"\
-            "values('{}',{},{},{})".format(productname,
-                                           buyingprice, sellingprice, stockquantity)
+        queryinsert = "insert into products(name,buying_price,selling_price)"\
+            "values('{}',{},{})".format(productname,
+                                           buyingprice, sellingprice)
         
 
         cur.execute(queryinsert)
@@ -120,8 +123,30 @@ def stock():
         cur.execute(querystockinsert)
         conn.commit()
         return redirect("/stock")
+
+
+@app.route("/expenses", methods=["GET", "POST"])
+@login_required
+def expenses():
+    if request.method == "GET":
+        cur.execute("select * from purchases;")
+        myexpenses = cur.fetchall()
+        return render_template("expenses.html", myexpenses=myexpenses)
+    else:
+        expensecategory = request.form["category"]
+        description = request.form["description"]
+        amount = float(request.form["amount"])      
+
+        queryinsertexpense = "insert into purchases(expense_category,description,amount,purchase_date)"\
+            "values('{}','{}',{},now())".format(expensecategory,
+                                           description, amount)
+        
+
+        cur.execute(queryinsertexpense)
+        conn.commit()
+        return redirect('/expenses')
     
-# route for editing products
+# route for editing products and expenses
 # NB the values passed in the request.form should match the entries in the database
 
 @app.route("/updateproducts", methods=["POST"])
@@ -130,15 +155,31 @@ def updates():
     id = request.form["id"]
     name = request.form["name"]
     buyingprice = request.form["buying_price"]
-    sellingprice = request.form["selling_price"]
-    quantity = request.form["stock_quantity"]
+    sellingprice = request.form["selling_price"]  
 
-    queryupdateproducts = "UPDATE products SET name = '{}', buying_price = {}, selling_price = {}, stock_quantity = {} WHERE id = {}".format(
-        name, buyingprice, sellingprice, quantity, id)
+    queryupdateproducts = "UPDATE products SET name = '{}', buying_price = {}, selling_price = {} WHERE id = {}".format(
+        name, buyingprice, sellingprice, id)
     cur.execute(queryupdateproducts)
     conn.commit()
     
     return redirect("/products")
+
+
+@app.route("/updateexpenses", methods=["POST"])
+def expenseupdate():
+
+    id = request.form["id"]
+    expense_category = request.form["expense_category"]
+    expense_description = request.form["description"]
+    expense_amount = request.form["amount"]  
+
+    queryupdatexpense = "UPDATE purchases SET expense_category = '{}', description = '{}', amount = {} WHERE id = {}".format(
+        expense_category, expense_description, expense_amount, id)
+    cur.execute(queryupdatexpense)
+    conn.commit()
+    
+    return redirect("/expenses")
+
 
 # register route
 
@@ -196,6 +237,7 @@ def login():
                 return redirect("/dashboard")
     else:
         return render_template("login.html")
+    
     
 @app.route("/logout")
 def logout():
