@@ -136,7 +136,7 @@ new Chart(document.getElementById("pie-chart"), {
       labels: {{ pieproducts | tojson }},
       datasets: [{
         label: "Profits in Ksh (Inclusive of Expenses)",
-        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#e1aba7","#5850c4","#50c458","#c49250","#cc4543"],
+        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#cc4543","#c45850","#e1aba7","#5850c4","#50c458","#c49250"],
         data: {{ pieprofits | tojson }}
       }]
     },

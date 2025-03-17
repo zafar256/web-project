@@ -19,13 +19,14 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # connects flash
 
 # decorative function
 def login_required(f):
-     @wraps(f)
-     def protected():
-         if 'email' not in session:
-             flash('You must first Login')
-             return redirect(url_for('login'))
-         return f()
-     return protected
+    @wraps(f)
+    def protected(*args, **kwargs):
+        if 'email' not in session:
+            flash('You must first log in')
+            next_url = request.url  # Store the requested URL
+            return redirect(url_for('login', next=next_url))  # Pass next_url
+        return f(*args, **kwargs)
+    return protected
     
 
 @app.route("/")
@@ -213,6 +214,8 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    next_url = request.args.get('next')  # Get next URL if provided
+    print("---------hyghhyy---hhhhhh---", next_url)
     if request.method == "POST":
         emailaddress = request.form["email"]
         password = request.form["password"]
@@ -233,12 +236,17 @@ def login():
                 flash("Invalid Credentials")
                 return redirect("/login")
             else:
+                print("-----ssdd--sdd--", request.form["next_url"])
+                next_url = request.form["next_url"]
                 session['email'] = emailaddress
-                return redirect("/dashboard")
-    else:
-        return render_template("login.html")
-    
-    
+                if next_url == "None":
+                    return redirect("/dashboard")
+                else:
+                    url = "/"+next_url.split('/')[-1]
+                    return redirect(url)
+    return render_template("login.html", next_url=next_url)
+                    
+                 
 @app.route("/logout")
 def logout():
     session.clear()
