@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body>
+
+    <!-- navigation -->
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary nav11" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a href="/"><img src="{{ url_for('static', filename='logo.png') }}" width="50px" height="50px"
+                    alt="logo"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 kilonav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/sales">Sales</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/stock">Stock</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/expenses">Expenses</a>
+                    </li>
+                </ul>
+
+                <div class="btn1">
+                    <a href="/register" style="padding-right: 15px;"><button>Register</button></a>
+                </div>
+
+                <div class="btn1">
+                    <a href="/contact-us"><button>Contact Us</button></a>
+                </div>
+
+            </div>
+        </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+
+
+    <!-- footer -->
+    <div class="footercopyright">
+        <div>
+            <p>Copyright <i class="fa-solid fa-copyright"></i> eZafar 2025. <br> Developed by IBRAHIM DEROW -
+                Zafar : +254 799 717 402</p>
+        </div>
+    </div>
+
+
+</body>
+</html>

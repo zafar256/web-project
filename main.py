@@ -201,13 +201,18 @@ def register():
             return render_template("register.html")
         else:
             password = request.form["password"]
-            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-            queryregister = "insert into users(fullname,email,password) "\
-                "values('{}','{}','{}')".format(fullname, email, hashed_password)
-            # .format includes the variables used
-            cur.execute(queryregister)
-            conn.commit()
-            return redirect("/login")
+            comfirmpassword = request.form["comfirmpassword"]
+            if comfirmpassword != password:
+                flash('Passwords Dont Match')
+                return redirect("/register")
+            else:
+                hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+                queryregister = "insert into users(fullname,email,password) "\
+                    "values('{}','{}','{}')".format(fullname, email, hashed_password)
+                # .format includes the variables used
+                cur.execute(queryregister)
+                conn.commit()
+                return redirect("/login")
     
 
 # login route
