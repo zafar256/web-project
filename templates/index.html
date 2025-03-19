@@ -29,7 +29,7 @@
 <body>
 
     {% extends "layout.html" %}
-    
+
 
     {% block title %}Home{% endblock %}
 
@@ -40,12 +40,24 @@
         <div class="carousel-inner caru">
             <div class="carousel-item active">
                 <img src="{{ url_for('static', filename='cc.jpg') }}" class="d-block w-100" alt="image">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5 style="color: black;">Analytics</h5>
+                    <p style="color: black;">Its now Easy to to know how your business is performing</p>
+                </div>
             </div>
             <div class="carousel-item">
                 <img src="{{ url_for('static', filename='aa.jpg') }}" class="d-block w-100" alt="img">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5 style="color: white;">Manage Sales</h5>
+                    <p style="color: white;">Track your sales by analyzing sales performance, and monitor your business revenue</p>
+                </div>
             </div>
             <div class="carousel-item">
                 <img src="{{ url_for('static', filename='cc.jpg') }}" class="d-block w-100" alt="image">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5 style="color: black;">Manage Products</h5>
+                    <p style="color: black;">This involves uploading, editing, and tracking stock levels</p>
+                </div>
             </div>
         </div>
     </div>
@@ -80,7 +92,7 @@
                     <br>
                     <p> This involves uploading, editing, and tracking stock levels. You can add new products by
                         entering details like name, price, and stock quantity. Editing features allow updates to product
-                        information, pricing, and stock.</p>
+                        information.</p>
                     <div class="btn1">
                         <a href="/products"><button type="submit">Continue to Products</button></a>
                     </div>
