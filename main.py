@@ -37,25 +37,67 @@ def home():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    cur.execute("SELECT products.name, sum(sales.quantity*products.selling_price) from sales join products on products.id=sales.pid group by products.name;")
-    salesperproduct = cur.fetchall()
+
+    # today sales per product
+    cur.execute("SELECT products.name, sum(sales.quantity*products.selling_price) from sales join products on products.id=sales.pid WHERE cast(created_at as DATE) = CURRENT_DATE group by products.name;")
+    todaysalesperproduct = cur.fetchall()
 
     x = []
     y = []
-    for i in salesperproduct:
+    for i in todaysalesperproduct:
         x.append(i[0])
         y.append(float(i[1]))
 
-    cur.execute("select products.name, sum(sales.quantity*(products.selling_price - products.buying_price )) from sales join products on products.id=sales.pid group by products.name;")
-    profits = cur.fetchall()
+
+    # today profit per product
+    cur.execute("select products.name, sum(sales.quantity*(products.selling_price - products.buying_price )) from sales join products on products.id=sales.pid WHERE cast(created_at as DATE) = CURRENT_DATE group by products.name;")
+    todayprofitsperproduct = cur.fetchall()
 
     pieproducts = []
     pieprofits = []
-    for j in profits:
+    for j in todayprofitsperproduct:
         pieproducts.append(j[0])
         pieprofits.append(float(j[1]))
 
-    return render_template("dashboard.html", x=x, y=y, pieproducts=pieproducts, pieprofits=pieprofits)
+
+    # general sales per product
+    cur.execute("SELECT products.name, sum(sales.quantity*products.selling_price) from sales join products on products.id=sales.pid group by products.name;")
+    salesperproduct = cur.fetchall()
+
+    xx = []
+    yy = []
+    for i in salesperproduct:
+        xx.append(i[0])
+        yy.append(float(i[1]))
+
+    # general profits per product
+    cur.execute("select products.name, sum(sales.quantity*(products.selling_price - products.buying_price )) from sales join products on products.id=sales.pid group by products.name;")
+    profitsperproduct = cur.fetchall()
+
+    pieproducts2 = []
+    pieprofits2 = []
+    for j in profitsperproduct:
+        pieproducts2.append(j[0])
+        pieprofits2.append(float(j[1]))
+
+
+    # Todays Net profits when all business expenses deducted
+
+    # profits
+    cur.execute("SELECT COALESCE(SUM(sales.quantity*(products.selling_price - products.buying_price )),0) FROM sales JOIN products on products.id=sales.pid WHERE cast(created_at as DATE) = CURRENT_DATE;")
+    profits = cur.fetchone()
+    print("-------rrtyy--t--r--e-", profits)
+    todayprofit = int(profits[0])
+    # expenses
+    cur.execute("select COALESCE(sum(amount),0) from purchases where  cast(purchase_date as DATE) = CURRENT_DATE;")
+    expenses = cur.fetchone()
+    print("----thy----", expenses)
+    todayexpenses = int(expenses[0])
+
+    todaynetprofit = todayprofit - todayexpenses
+
+
+    return render_template("dashboard.html", x=x, y=y, pieproducts=pieproducts, pieprofits=pieprofits, xx=xx, yy=yy, pieproducts2=pieproducts2, pieprofits2=pieprofits2, todaynetprofit=todaynetprofit, todayexpenses=todayexpenses, todayprofit=todayprofit)
 
 
 

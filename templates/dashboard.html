@@ -71,6 +71,18 @@
 
     <!-- bar graph and oie chart -->
     <div class="container mymodal">
+        <div style="margin-bottom: 60px;">
+            <div class="row">
+                <div style="background-color: rgb(194, 248, 248); padding: 20px;">
+                    <h3 style="text-align: center;">Today's Profit:<strong style="color: blue;"> Ksh
+                            {{todayprofit}}</strong> ||| Today's Expenses: <strong style="color: red;">Ksh
+                            {{todayexpenses}}</strong></h3>
+                    <h3 style="text-align: center;">Today's Net Profit: <strong style="color: green;"> Ksh
+                            {{todaynetprofit}}</strong></h3>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-12 col-sm-6 col-m-6">
                 <canvas id="bar-chart" width="400" height="330"></canvas>
@@ -83,12 +95,16 @@
 
         <div class="row" style="padding-top: 40px;">
             <div class="col-12 col-sm-6 col-m-6">
+                <canvas id="bar-chart2" width="400" height="330"></canvas>
+            </div>
+
+            <div class="col-12 col-sm-6 col-m-6">
                 <canvas id="pie-chart2" width="400" height="330"></canvas>
             </div>
         </div>
     </div>
 
-   
+
 
 
     <!-- bootstrap script -->
@@ -100,14 +116,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 
     <script>
-        // Bar chart
+        // Bar chart for today sales per product
         new Chart(document.getElementById("bar-chart"), {
             type: 'bar',
             data: {
                 labels: {{ x | tojson }},
             datasets: [
             {
-                label: "Total Sales (Ksh)",
+                label: "Today's Total Sales Per Product (Ksh)",
                 backgroundColor: "#c45850",
                 data: {{ y | tojson }}
             }
@@ -117,28 +133,71 @@
             legend: { display: false },
             title: {
                 display: true,
-                text: 'Sales Per Product'
+                text: 'Today Total Sales Per Product (Ksh)'
             }
         }
 });
 
-// pie chart
-new Chart(document.getElementById("pie-chart"), {
-    type: 'pie',
-    data: {
-      labels: {{ pieproducts | tojson }},
-      datasets: [{
-        label: "Profits in Ksh (Inclusive of Expenses)",
-        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#cc4543","#c45850","#e1aba7","#5850c4","#50c458","#c49250"],
-        data: {{ pieprofits | tojson }}
+        // pie chart for today profits per product
+        new Chart(document.getElementById("pie-chart"), {
+            type: 'pie',
+            data: {
+                labels: {{ pieproducts | tojson }},
+            datasets: [{
+                label: "Today's Profits Per Product in Ksh",
+                backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#cc4543", "#c45850", "#e1aba7", "#5850c4", "#50c458", "#c49250"],
+                data: {{ pieprofits | tojson }}
       }]
     },
-    options: {
-      title: {
-        display: true,
-        text: 'Profits in Ksh (Inclusive of Expenses)'
-      }
-    }
+            options: {
+            title: {
+                display: true,
+                text: 'Today Profits Per Product in Ksh'
+            }
+        }
+});
+
+
+
+        // Bar chart for general sales per product
+        new Chart(document.getElementById("bar-chart2"), {
+            type: 'bar',
+            data: {
+                labels: {{ xx | tojson }},
+            datasets: [
+            {
+                label: "General Sales Per Product (Ksh)",
+                backgroundColor: "#c45850",
+                data: {{ yy | tojson }}
+            }
+        ]
+    },
+            options: {
+            legend: { display: false },
+            title: {
+                display: true,
+                text: 'General Sales Per Product (Ksh)'
+            }
+        }
+});
+
+        // pie chart for general profits per product
+        new Chart(document.getElementById("pie-chart2"), {
+            type: 'pie',
+            data: {
+                labels: {{ pieproducts2 | tojson }},
+            datasets: [{
+                label: "General Profits Per Product in Ksh",
+                backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#cc4543", "#c45850", "#e1aba7", "#5850c4", "#50c458", "#c49250"],
+                data: {{ pieprofits2 | tojson }}
+      }]
+    },
+            options: {
+            title: {
+                display: true,
+                text: 'General Profits Per Product in Ksh'
+            }
+        }
 });
 
 
