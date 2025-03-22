@@ -123,10 +123,6 @@ def products():
         return redirect('/products')
     
 
-@app.route("/contact-us")
-def contact():
-    return render_template("contact.html")
-
 
 @app.route("/sales", methods=["GET", "POST"])
 @login_required
