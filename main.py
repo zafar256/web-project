@@ -9,6 +9,9 @@ app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # connects flash
 
+
+# ----------------------------------------------------------
+
 # cur.execute("CREATE TABLE IF NOT EXISTS products (id serial PRIMARY KEY, name VARCHAR ( 100 ) NOT NULL, buying_price NUMERIC(14, 2), selling_price NUMERIC(14, 2), stock_quantity INT DEFAULT 0);")
 # cur.execute("CREATE TABLE IF NOT EXISTS sales (id serial PRIMARY KEY, pid int, quantity numeric(5,2), created_at TIMESTAMP, CONSTRAINT myproduct FOREIGN KEY(pid) references products(id) on UPDATE cascade on DELETE restrict);")
 # cur.execute("CREATE TABLE IF NOT EXISTS purchases(id SERIAL PRIMARY KEY, expense_category VARCHAR(100) NOT NULL, description TEXT, amount DECIMAL(10,2) NOT NULL, purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
@@ -17,7 +20,12 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # connects flash
 
 # conn.commit()
 
+
+# ----------------------------------------------------------------
+
+
 # decorative function
+
 def login_required(f):
     @wraps(f)
     def protected(*args, **kwargs):
@@ -28,15 +36,20 @@ def login_required(f):
         return f(*args, **kwargs)
     return protected
     
+# ----------------------------------------------------------
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
 
+# ------------------------------------------------------------
+
+
 @app.route("/dashboard")
 @login_required
 def dashboard():
+
 
     # today sales per product
     cur.execute("SELECT products.name, sum(sales.quantity*products.selling_price) from sales join products on products.id=sales.pid WHERE cast(created_at as DATE) = CURRENT_DATE group by products.name;")
@@ -97,7 +110,63 @@ def dashboard():
     todaynetprofit = todayprofit - todayexpenses
 
 
-    return render_template("dashboard.html", x=x, y=y, pieproducts=pieproducts, pieprofits=pieprofits, xx=xx, yy=yy, pieproducts2=pieproducts2, pieprofits2=pieprofits2, todaynetprofit=todaynetprofit, todayexpenses=todayexpenses, todayprofit=todayprofit)
+    # General Net profits when all general business expenses deducted
+
+    # profits
+    cur.execute("SELECT COALESCE(SUM(sales.quantity*(products.selling_price - products.buying_price )),0) FROM sales JOIN products on products.id=sales.pid;")
+    generalprofits = cur.fetchone()
+    print("-------rrtyy--t--r--e-", profits)
+    generalprofit = int(generalprofits[0])
+    # expenses
+    cur.execute("select COALESCE(sum(amount),0) from purchases;")
+    generalexpense = cur.fetchone()
+    print("----thy----", expenses)
+    generalexpenses = int(generalexpense[0])
+
+    generalnetprofit = generalprofit - generalexpenses
+
+
+    # today expenses pie chart
+    cur.execute("select purchases.categoryid, categories.categoryname, sum(purchases.amount) from purchases join categories on categories.id=purchases.categoryid WHERE cast(purchase_date as DATE) = CURRENT_DATE group by purchases.categoryid,categories.categoryname;")
+    todayexpensespie = cur.fetchall()
+
+    pieitem1 = []
+    pieexpense1 = []
+    for j in todayexpensespie:
+        pieitem1.append(j[1])
+        pieexpense1.append(float(j[2]))
+
+
+    # general expenses pie chart
+    cur.execute("select purchases.categoryid, categories.categoryname, sum(purchases.amount) from purchases join categories on categories.id=purchases.categoryid group by purchases.categoryid,categories.categoryname;;")
+    generalexpensespie = cur.fetchall()
+
+    print("----rthtt----eer---", generalexpensespie)
+
+    pieitem = []
+    pieexpense = []
+    for j in generalexpensespie:
+        pieitem.append(j[1])
+        pieexpense.append(float(j[2]))
+
+
+    # bar graph for total stock  
+
+    cur.execute("select products.id as pid, products.name, sum(stock.quantity) from stock join products on stock.pid=products.id group by products.id, products.name;")
+    totalstock = cur.fetchall()
+    print("------stock----sss---", totalstock)
+
+    xxx = []
+    yyy = []
+    for i in totalstock:
+        xxx.append(i[1])
+        yyy.append(float(i[2]))
+
+
+    return render_template("dashboard.html", x=x, y=y, pieproducts=pieproducts, pieprofits=pieprofits, xx=xx, yy=yy, pieproducts2=pieproducts2, pieprofits2=pieprofits2, todaynetprofit=todaynetprofit, todayexpenses=todayexpenses, todayprofit=todayprofit, generalnetprofit=generalnetprofit, generalexpenses=generalexpenses, generalprofit=generalprofit, pieitem=pieitem, pieexpense=pieexpense, pieexpense1=pieexpense1, pieitem1=pieitem1, xxx=xxx, yyy=yyy)
+
+
+# ---------------------------------------------------------------------------------
 
 
 
@@ -120,8 +189,29 @@ def products():
 
         cur.execute(queryinsert)
         conn.commit()
-        return redirect('/products')
+        return redirect('/products')    
+
+# --------------
+
+# route for editing products and expenses
+# NB for updating the values passed in the request.form should match the entries in the database
+
+@app.route("/updateproducts", methods=["POST"])
+def updates():
+
+    id = request.form["id"]
+    name = request.form["name"]
+    buyingprice = request.form["buying_price"]
+    sellingprice = request.form["selling_price"]  
+
+    queryupdateproducts = "UPDATE products SET name = '{}', buying_price = {}, selling_price = {} WHERE id = {}".format(
+        name, buyingprice, sellingprice, id)
+    cur.execute(queryupdateproducts)
+    conn.commit()
     
+    return redirect("/products")
+
+# --------------------------------------------------------------------------===============---------------
 
 
 @app.route("/sales", methods=["GET", "POST"])
@@ -143,6 +233,8 @@ def sales():
         conn.commit()
         return redirect("/sales")
 
+# ---------------------------------------------------------------------------------------------------
+
 
 @app.route("/stock", methods=["GET", "POST"])
 @login_required
@@ -163,6 +255,8 @@ def stock():
         conn.commit()
         return redirect("/stock")
 
+# ---------------------------------------------------------------------------------------------------
+
 
 @app.route("/expenses", methods=["GET", "POST"])
 @login_required
@@ -170,13 +264,18 @@ def expenses():
     if request.method == "GET":
         cur.execute("select * from purchases;")
         myexpenses = cur.fetchall()
-        return render_template("expenses.html", myexpenses=myexpenses)
+
+        cur.execute("SELECT * FROM categories;")
+        mycategories = cur.fetchall()  
+
+        return render_template("expenses.html", myexpenses=myexpenses, mycategories=mycategories)
+
     else:
-        expensecategory = request.form["category"]
+        expensecategory = request.form["categoryid"]
         description = request.form["description"]
         amount = float(request.form["amount"])      
 
-        queryinsertexpense = "insert into purchases(expense_category,description,amount,purchase_date)"\
+        queryinsertexpense = "insert into purchases(categoryid,description,amount,purchase_date)"\
             "values('{}','{}',{},now())".format(expensecategory,
                                            description, amount)
         
@@ -184,40 +283,63 @@ def expenses():
         cur.execute(queryinsertexpense)
         conn.commit()
         return redirect('/expenses')
-    
-# route for editing products and expenses
-# NB the values passed in the request.form should match the entries in the database
 
-@app.route("/updateproducts", methods=["POST"])
-def updates():
-
-    id = request.form["id"]
-    name = request.form["name"]
-    buyingprice = request.form["buying_price"]
-    sellingprice = request.form["selling_price"]  
-
-    queryupdateproducts = "UPDATE products SET name = '{}', buying_price = {}, selling_price = {} WHERE id = {}".format(
-        name, buyingprice, sellingprice, id)
-    cur.execute(queryupdateproducts)
-    conn.commit()
-    
-    return redirect("/products")
-
+# -----------
 
 @app.route("/updateexpenses", methods=["POST"])
 def expenseupdate():
 
     id = request.form["id"]
-    expense_category = request.form["expense_category"]
+    expense_category = request.form["categoryid"]
     expense_description = request.form["description"]
     expense_amount = request.form["amount"]  
 
-    queryupdatexpense = "UPDATE purchases SET expense_category = '{}', description = '{}', amount = {} WHERE id = {}".format(
+    queryupdatexpense = "UPDATE purchases SET categoryid = '{}', description = '{}', amount = {} WHERE id = {}".format(
         expense_category, expense_description, expense_amount, id)
     cur.execute(queryupdatexpense)
     conn.commit()
     
     return redirect("/expenses")
+
+# ----------------------------------------------------------------------------------------------------
+
+@app.route("/expense_categories", methods=["GET", "POST"])
+@login_required
+def categories():
+    if request.method == "GET":
+        cur.execute("select * from categories;")
+        mycategories = cur.fetchall()
+        print("---------dcc----------cdcdcd----", mycategories)
+        return render_template("categories.html", mycategories=mycategories)
+    else:
+        categoryname = request.form["categoryname"]
+
+        queryinsertcategory = "insert into categories(categoryname)"\
+            "values('{}')".format(categoryname)
+        
+
+        cur.execute(queryinsertcategory)
+        conn.commit()
+        return redirect('/expense_categories')
+
+# -------------
+
+
+@app.route("/updatecategories", methods=["POST"])
+def categoryupdates():
+
+    id = request.form["id"]
+    # NB for updating the values passed in the request.form should match the entries in the database
+    category_name = request.form["categoryname"]  
+
+    queryupdatecategories = "UPDATE categories SET categoryname = '{}' WHERE id = {}".format(
+        category_name, id)
+    cur.execute(queryupdatecategories)
+    conn.commit()
+    
+    return redirect("/expense_categories")
+
+# ------------------------------------------------------------------------------------
 
 
 # register route
@@ -251,6 +373,9 @@ def register():
                 cur.execute(queryregister)
                 conn.commit()
                 return redirect("/login")
+
+
+# ------------------------------------------------------------------------------------
     
 
 # login route
@@ -288,12 +413,16 @@ def login():
                     url = "/"+next_url.split('/')[-1]
                     return redirect(url)
     return render_template("login.html", next_url=next_url)
+
+# -------------------------------------------------------------------------------------------------------------
                     
                  
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/login")
+
+# ------------------------------------------------------------------------------------
 
 
 if __name__ == '__main__': 

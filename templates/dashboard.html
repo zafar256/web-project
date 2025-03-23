@@ -8,12 +8,23 @@
 <div class="container mymodal">
     <div style="margin-bottom: 60px;">
         <div class="row">
-            <div style="background-color: rgb(194, 248, 248); padding: 20px;">
-                <h3 style="text-align: center;">Today's Profit:<strong style="color: blue;"> Ksh
-                        {{todayprofit}}</strong> ||| Today's Expenses: <strong style="color: red;">Ksh
-                        {{todayexpenses}}</strong></h3>
-                <h3 style="text-align: center;">Today's Net Profit: <strong style="color: green;"> Ksh
-                        {{todaynetprofit}}</strong></h3>
+            <div class="col-12 col-sm-6 col-m-6">
+                <div style="background-color: rgb(194, 248, 248); padding: 20px;">
+                    <h3 style="text-align: center;">Today's Profit:<strong style="color: blue;"> Ksh
+                            {{todayprofit}}</strong> ||| Today's Expenses: <strong style="color: red;">Ksh
+                            {{todayexpenses}}</strong></h3>
+                    <h3 style="text-align: center;">Today's Net Profit: <strong style="color: green;"> Ksh
+                            {{todaynetprofit}}</strong></h3>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-m-6">
+                <div style="background-color: rgb(194, 248, 248); padding: 20px;">
+                    <h3 style="text-align: center;">General Profits:<strong style="color: blue;"> Ksh
+                            {{generalprofit}}</strong> ||| General Expenses: <strong style="color: red;">Ksh
+                            {{generalexpenses}}</strong></h3>
+                    <h3 style="text-align: center;">General Net Profit: <strong style="color: green;"> Ksh
+                            {{generalnetprofit}}</strong></h3>
+                </div>
             </div>
         </div>
     </div>
@@ -27,7 +38,7 @@
             <canvas id="pie-chart" width="400" height="330"></canvas>
         </div>
     </div>
-
+    <!-- total sales per product n total profit per product -->
     <div class="row" style="padding-top: 40px;">
         <div class="col-12 col-sm-6 col-m-6">
             <canvas id="bar-chart2" width="400" height="330"></canvas>
@@ -35,6 +46,24 @@
 
         <div class="col-12 col-sm-6 col-m-6">
             <canvas id="pie-chart2" width="400" height="330"></canvas>
+        </div>
+    </div>
+
+    <!-- expenses pie charts -->
+    <div class="row" style="padding-top: 40px;">
+        <div class="col-12 col-sm-6 col-m-6">
+            <canvas id="pie-chart3" width="400" height="330"></canvas>
+        </div>
+
+        <div class="col-12 col-sm-6 col-m-6">
+            <canvas id="pie-chart4" width="400" height="330"></canvas>
+        </div>
+    </div>
+
+    <!-- total stock bar graph -->
+    <div class="row" style="padding-top: 40px;">
+        <div class="col-12 col-sm-6 col-m-6">
+            <canvas id="bar-chart3" width="400" height="330"></canvas>
         </div>
     </div>
 </div>
@@ -118,7 +147,7 @@
             labels: {{ pieproducts2 | tojson }},
         datasets: [{
             label: "General Profits Per Product in Ksh",
-            backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#cc4543", "#c45850", "#e1aba7", "#5850c4", "#50c458", "#c49250"],
+            backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#cc4543", "#c45850", "#e1aba7", "#5850c4", "#50c458", "#c49250", "#FF69B4", "#FF1493"],
             data: {{ pieprofits2 | tojson }}
       }]
     },
@@ -130,17 +159,72 @@
     }
 });
 
+
+
+
+
+    // Pie chart for general expenses
+    new Chart(document.getElementById("pie-chart3"), {
+        type: 'pie',
+        data: {
+            labels: {{ pieitem | tojson }},
+        datasets: [{
+            label: "General expenses (Ksh)",
+            backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#cc4543", "#c45850", "#e1aba7", "#5850c4", "#50c458", "#c49250", "#FF69B4", "#FF1493"],
+            data: {{ pieexpense | tojson }}
+      }]
+    },
+        options: {
+        title: {
+            display: true,
+            text: 'General expenses (Ksh)'
+        }
+    }
+});
+
+    // pie chart for today expenses
+    new Chart(document.getElementById("pie-chart4"), {
+        type: 'pie',
+        data: {
+            labels: {{ pieitem1 | tojson }},
+        datasets: [{
+            label: "Today Expenses (Ksh)",
+            backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#cc4543", "#c45850", "#e1aba7", "#5850c4", "#50c458", "#c49250", "#FF69B4", "#FF1493"],
+            data: {{ pieexpense1 | tojson }}
+      }]
+    },
+        options: {
+        title: {
+            display: true,
+            text: 'Today Expenses (Ksh)'
+        }
+    }
+});
+
+
+
+    // Bar chart for total stock
+    new Chart(document.getElementById("bar-chart3"), {
+        type: 'bar',
+        data: {
+            labels: {{ xxx | tojson }},
+        datasets: [
+        {
+            label: "Total Stock Per Product",
+            backgroundColor: "#c45850",
+            data: {{ yyy | tojson }}
+            }
+    ]
+    },
+        options: {
+        legend: { display: false },
+        title: {
+            display: true,
+            text: 'Total Stock Per Product'
+        }
+    }
+});
+
 </script>
 
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-

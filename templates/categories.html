@@ -1,19 +1,17 @@
 {% extends "layout.html" %}
 
 
-{% block title %}Expenses{% endblock %}
+{% block title %}Categories{% endblock %}
 
 {% block content %}
-<!-- adding expenses to table using a modal form-->
+
+<!-- adding products to table using a modal form-->
 
 <!-- Button trigger modal -->
 <div class="mymodal container">
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Add Expense
+        Add Category
     </button>
-    <a href="/expense_categories"><button type="button" class="btn btn-primary">
-            Expense Categories
-        </button></a>
 
     <!-- Modal -->
     <div class="modal fade modalsize" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -21,26 +19,15 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add Expense</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add Category</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
 
-                    <form action="/expenses" method="POST" class="mymodalbody row gy-2 gx-3 align-items-center">
+                    <form action="/expense_categories" method="POST" class="mymodalbody row gy-2 gx-3 align-items-center">
 
-                        <label for="">Category</label>
-                        <select name="categoryid" id="">
-                            {% for q in mycategories %}
-                            <!-- this loops category id in category table indexed at p[0] and displays categoryname indexed p[1] while selecting a category -->
-                            <option value="{{q[0]}}">{{q[1]}}</option>
-                            {% endfor %}
-                        </select>
-
-                        <label for="">Description</label>
-                        <input type="text" placeholder="Expense Description" name="description" required>
-
-                        <label for="">Amount</label>
-                        <input type="number" placeholder="Amount" name="amount" required>
+                        <label for="">Category Name</label>
+                        <input type="text" placeholder="Category Name" name="categoryname" required>
 
                         <!-- <div class="modal-footer"> -->
                         <input type="submit" class="btn btn-primary"></input>
@@ -53,28 +40,22 @@
     </div>
 </div>
 
-<!-- expense table -->
+<!-- category table -->
 <div class="container productable">
     <table id="myTable" class="display" border="2">
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Categoryid</th>
-                <th>Description</th>
-                <th>Amount</th>
-                <th>Purchase Date</th>
+                <th>Category Name</th>
                 <!-- th for editing -->
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            {% for p in myexpenses %}
+            {% for p in mycategories %}
             <tr>
                 <td>{{p[0]}}</td>
                 <td>{{p[1]}}</td>
-                <td>{{p[2]}}</td>
-                <td>{{p[3]}}</td>
-                <td>{{p[4]}}</td>
                 <td>
                     <!-- Button trigger modal -->
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
@@ -82,31 +63,26 @@
                         Edit
                     </button>
 
-                    <!-- modal form to edit expenses -->
+                    <!-- modal form to edit products -->
 
                     <div class="modal fade" id="exampleModal{{p[0]}}" tabindex="-1" aria-labelledby="exampleModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Expense</h1>
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Category</h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
 
                                 <div class="modal-body">
-                                    <form action="/updateexpenses" method="POST"
+                                    <form action="/updatecategories" method="POST"
                                         class="row gy-2 gx-3 align-items-center">
 
                                         <input type="hidden" name="id" value="{{p[0]}}">
 
-                                        <label for="name">Category:</label>
-                                        <input value="{{p[1]}}" type="text" name="categoryid" required><br><br>
-                                        <label for="description">Description</label>
-                                        <input value="{{p[2]}}" type="text" name="description" required><br><br>
-                                        <label for="amount">Amount</label>
-                                        <input value="{{p[3]}}" type="number" name="amount" step="0.01"
-                                            required><br><br>
+                                        <label for="name">Category Name:</label>
+                                        <input value="{{p[1]}}" type="text" name="categoryname" required><br><br>
 
                                         <button type="submit" class="btn btn-primary">Update</button>
 
@@ -123,6 +99,7 @@
         </tbody>
     </table>
 </div>
+
 
 
 {% endblock %}
