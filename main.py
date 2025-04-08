@@ -1,6 +1,7 @@
 # render template connects to html pages
 from flask import Flask, render_template, request, redirect, flash, session, url_for
 
+
 from functools import wraps
 from flask_bcrypt import Bcrypt
 from database import conn, cur  # import to connect to local database
@@ -14,9 +15,10 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # connects flash
 
 # cur.execute("CREATE TABLE IF NOT EXISTS products (id serial PRIMARY KEY, name VARCHAR ( 100 ) NOT NULL, buying_price NUMERIC(14, 2), selling_price NUMERIC(14, 2), stock_quantity INT DEFAULT 0);")
 # cur.execute("CREATE TABLE IF NOT EXISTS sales (id serial PRIMARY KEY, pid int, quantity numeric(5,2), created_at TIMESTAMP, CONSTRAINT myproduct FOREIGN KEY(pid) references products(id) on UPDATE cascade on DELETE restrict);")
-# cur.execute("CREATE TABLE IF NOT EXISTS purchases(id SERIAL PRIMARY KEY, expense_category VARCHAR(100) NOT NULL, description TEXT, amount DECIMAL(10,2) NOT NULL, purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
+# cur.execute("CREATE TABLE IF NOT EXISTS purchases(id SERIAL PRIMARY KEY,  categoryid INT NOT NULL, description TEXT, amount DECIMAL(10,2) NOT NULL, purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, CONSTRAINT categoryid FOREIGN KEY (categoryid) REFERENCES categories(id) on UPDATE cascade on DELETE restrict);")
 # cur.execute("CREATE TABLE IF NOT EXISTS stock (id serial PRIMARY KEY, pid int, quantity numeric(5,2), created_at TIMESTAMP, CONSTRAINT myproduct FOREIGN KEY(pid) references products(id) on UPDATE cascade on DELETE restrict);")
 # cur.execute("CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, email VARCHAR,password VARCHAR);")
+# cur.execute("CREATE TABLE IF NOT EXISTS table categories (ID serial PRIMARY KEY, categoryname VARCHAR(100) NOT NULL);")
 
 # conn.commit()
 
@@ -189,7 +191,7 @@ def products():
 
         cur.execute(queryinsert)
         conn.commit()
-        return redirect('/products')    
+        return redirect('/products')      
 
 # --------------
 
@@ -414,15 +416,26 @@ def login():
                     return redirect(url)
     return render_template("login.html", next_url=next_url)
 
-# -------------------------------------------------------------------------------------------------------------
-                    
+# -------------------------------------------------------------------------------------------------------------  
+
+@app.route("/forgotpassword")
+def forgot():
+    return render_template("forgotpassword.html") 
+
+# -----------
+
+@app.route("/resetpassword")
+def reset():
+    return render_template("resetpassword.html")      
+
+# ----------------------------------------------------------------------------------------------------------
                  
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/login")
 
-# ------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------
 
 
 if __name__ == '__main__': 
