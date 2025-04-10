@@ -81,8 +81,8 @@
 .logindetails{
     background-color: #2B3035;
     padding: 40px;
-    margin-right: 80px;
-    margin-left: 80px;
+    margin-right: 20px;
+    margin-left: 20px;
     border-radius: 15px;
     color: white;
 }
@@ -275,4 +275,52 @@ table.dataTable th, table.dataTable td {
   .register button:hover{
     background-color: #2B3035;
     color: white;
+  }
+
+  /* ------------------------------------------ */
+
+  /* ---------------------------------------------------------- */
+
+/* register form */
+
+.form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  
+  .form-container .form-group {
+    margin-bottom: 1.2rem;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-container label {
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+  }
+  
+  .form-container input {
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .form-container .btn-submit {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: orangered;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .form-container .btn-submit:hover {
+    background-color: #2f2f2f;
   }
