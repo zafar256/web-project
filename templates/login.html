@@ -9,18 +9,18 @@
     <div class="logindetails">
         <h3 style="text-align: center; padding-bottom: 30px;">Login</h3>
 
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul class=flashes>
-            {% for message in messages %}
-            <li style="list-style: none; color: red;">{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
-
 
         <form action="/login" method="POST" class="form-container">
+
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                <li style="list-style: none; color: red;">{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
 
             <input type="hidden" name="next_url" value="{{next_url}}">
 

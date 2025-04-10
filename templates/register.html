@@ -11,17 +11,17 @@
 
         <h3 style="text-align: center; padding-bottom: 30px;">Register</h3>
 
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul class=flashes>
-            {% for message in messages %}
-            <li style="list-style: none; color: red;">{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
-
         <form action="/register" method="POST" class="form-container">
+
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                <li style="list-style: none; color: red;">{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
 
             <div class="form-group">
                 <label for="fullname">Full name</label>
